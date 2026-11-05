@@ -7,7 +7,7 @@
 #    bash line-connect.sh mac            # ตั้งบน Mac (cloudflared tunnel)
 #    bash line-connect.sh vps your-domain.com   # รันบน Hostinger VPS
 #  non-interactive:
-#    LINE_TOKEN="$LINE_TOKEN" LINE_SECRET="$LINE_SECRET" bash line-connect.sh vps
+#    LINE_TOKEN="xxx" LINE_SECRET="yyy" bash line-connect.sh vps
 #  dry-run (ดูว่าจะทำอะไรบ้าง ไม่แตะจริง):
 #    DRY=1 bash line-connect.sh vps
 # =====================================================================
@@ -32,7 +32,8 @@ ask LINE_SECRET "LINE Channel secret: "
 
 # ---------- verify token ก่อนเสมอ (บทเรียน: อย่าเดาจาก length) ----------
 say "ตรวจ token กับ LINE API ..."
-BOTNAME=$(curl -sf -m 15 https://api.line.me/v2/bot/info -H "Authorization: Bearer ***" | sed -n 's/.*"displayName":"\([^"]*\)".*/\1/p') || die "LINE ปฏิเสธ token นี้ — ลอง copy ใหม่ทั้งก้อน (ห้ามตัดต่อ)"
+AUTHH="Bearer $LINE_TOKEN"
+BOTNAME=$(curl -sf -m 15 https://api.line.me/v2/bot/info -H "Authorization: ${AUTHH}" | sed -n 's/.*"displayName":"\([^"]*\)".*/\1/p') || die "LINE ปฏิเสธ token นี้ — ลอง copy ใหม่ทั้งก้อน (ห้ามตัดต่อ)"
 say "OK — พบ OA «$BOTNAME» 🎉"
 
 env_block(){ # $1 = path to .env
