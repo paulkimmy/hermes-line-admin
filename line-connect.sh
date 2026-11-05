@@ -1,15 +1,16 @@
 #!/usr/bin/env bash
 # =====================================================================
-# line-connect.sh — Hermes × LINE OA in ONE command (v1.1)
+# line-connect.sh — Hermes × LINE OA in ONE command (v1.1.2)
 # กลั่นจากของจริงทั้งวัน: token, profile lane, shared listener, Traefik
 #
 #  usage:
 #    bash line-connect.sh mac            # ตั้งบน Mac (cloudflared tunnel)
 #    bash line-connect.sh vps your-domain.com   # รันบน Hostinger VPS
+#  multi-project VPS: PROJECT=/docker/hermes-agent-xxxx bash line-connect.sh vps ...
 #  non-interactive:
 #    LINE_TOKEN="xxx" LINE_SECRET="yyy" bash line-connect.sh vps
 #  dry-run (ดูว่าจะทำอะไรบ้าง ไม่แตะจริง):
-#    DRY=1 bash line-connect.sh vps
+#    DRY=1 bash line-connect.sh vps your-domain.com
 # =====================================================================
 set -euo pipefail
 GREEN='\033[32m'; AMBER='\033[33m'; RED='\033[31m'; DIM='\033[2m'; NC='\033[0m'
@@ -96,8 +97,18 @@ fi
 if [ "$MODE" = "vps" ]; then
   [ "$(id -u)" = "0" ] || die "รันบน VPS ด้วย root นะครับ (ssh root@...)"
   [ -d /docker ] || die "ไม่พบ /docker — สคริปต์นี้ออกแบบให้ Hostinger 'Hermes Agent' template"
-  PROJ=$(find /docker -maxdepth 1 -type d -name 'hermes-agent-*' | head -1)
-  C=$(docker ps --format '{{.Names}}' | grep 'hermes-agent' | head -1)
+  CANDS=$(find /docker -maxdepth 1 -type d -name 'hermes-agent-*' | sort)
+  N=$(printf '%s\n' "$CANDS" | grep -c .)
+  PROJ="${PROJECT:-}"
+  if [ -z "$PROJ" ] && [ "$N" -gt 1 ]; then
+    warn "พบหลาย project บนเครื่องนี้ — เลือกที่จะใช้:"
+    printf '%s\n' "$CANDS" | sed 's/^/   /'
+    read -rp "พิมพ์ path project (Enter = ตัวแรก): " PROJ
+  fi
+  [ -z "$PROJ" ] && PROJ=$(printf '%s\n' "$CANDS" | grep . | head -1)
+  [ -d "$PROJ" ] || die "ไม่พบ project: $PROJ"
+  C=$(docker ps --format '{{.Names}}' | grep -m1 "${PROJ##*/}")
+  [ -n "$C" ] || die "ไม่พบ container ที่รันอยู่ของ $PROJ (docker ps)"
   say "โหมด VPS — project=$PROJ container=$C domain=$DOMAIN"
   run docker exec -u hermes -e HERMES_HOME=/opt/data "$C" hermes profile create "$PROFILE" --description "LINE customer bot"
   mkdir -p "$PROJ/data/profiles/$PROFILE"; env_block "$PROJ/data/profiles/$PROFILE/.env"
