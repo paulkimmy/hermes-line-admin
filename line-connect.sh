@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =====================================================================
-# line-connect.sh — Hermes × LINE OA in ONE command
+# line-connect.sh — Hermes × LINE OA in ONE command (v1.1)
 # กลั่นจากของจริงทั้งวัน: token, profile lane, shared listener, Traefik
 #
 #  usage:
@@ -32,7 +32,7 @@ ask LINE_SECRET "LINE Channel secret: "
 
 # ---------- verify token ก่อนเสมอ (บทเรียน: อย่าเดาจาก length) ----------
 say "ตรวจ token กับ LINE API ..."
-AUTHH="Bearer $LINE_TOKEN"
+AUTHH="Bearer ***"
 BOTNAME=$(curl -sf -m 15 https://api.line.me/v2/bot/info -H "Authorization: ${AUTHH}" | sed -n 's/.*"displayName":"\([^"]*\)".*/\1/p') || die "LINE ปฏิเสธ token นี้ — ลอง copy ใหม่ทั้งก้อน (ห้ามตัดต่อ)"
 say "OK — พบ OA «$BOTNAME» 🎉"
 
@@ -68,6 +68,15 @@ if [ "$MODE" = "mac" ]; then
   say "restart gateway (ถ้าคำสั่งค้าง ~15 วิ = ปกติ กด Ctrl+C ได้ log บอกเอง)"
   run hermes gateway restart
   wait_health "http://127.0.0.1:8644/p/$PROFILE/line/webhook/health"
+
+  say "ให้ลูกค้าทักจากทุกบัญชีได้เลยไหม? (แนะนำ y สำหรับบอทหน้าร้าน) [y/n]"
+  read -r ANY; if [ "$ANY" = "y" ]; then
+    echo "LINE_ALLOW_ALL_USERS=true" >> "$H/profiles/$PROFILE/.env"
+    say "บันทึกแล้ว — กำลัง restart gateway"
+    run hermes gateway restart
+    wait_health "http://127.0.0.1:8644/p/$PROFILE/line/webhook/health"
+  fi
+
   if command -v cloudflared >/dev/null 2>&1; then
     say "เปิด cloudflared ให้เลย? (y/n)"; read -r YN
     if [ "$YN" = "y" ]; then
@@ -108,6 +117,15 @@ if [ "$MODE" = "vps" ]; then
     fi
   run bash -c "cd $PROJ && docker compose up -d && docker restart $C"
   wait_health "https://$DOMAIN/p/$PROFILE/line/webhook/health"
+
+  say "ให้ลูกค้าทักจากทุกบัญชีได้เลยไหม? (แนะนำ y สำหรับบอทหน้าร้าน) [y/n]"
+  read -r ANY; if [ "$ANY" = "y" ]; then
+    echo "LINE_ALLOW_ALL_USERS=true" >> "$PROJ/data/profiles/$PROFILE/.env"
+    say "บันทึกแล้ว — กำลัง restart gateway"
+    run docker restart "$C"
+    wait_health "https://$DOMAIN/p/$PROFILE/line/webhook/health"
+  fi
+
   echo; printf "  ${GREEN}✅ เสร็จ! เอา URL นี้ไป Verify ใน LINE Console:${NC}\n  https://%s/p/%s/line/webhook\n\n" "$DOMAIN" "$PROFILE"
   printf "${DIM}  (ถ้าเปลี่ยน OA ภายหลัง: token ใหม่ Issue แล้วรันสคริปต์นี้ซ้ำ = ทับของเก่าอย่างปลอดภัย)${NC}\n"
 fi
