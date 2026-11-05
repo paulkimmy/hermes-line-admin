@@ -89,7 +89,7 @@
 <body>
 <div class="wrap">
 
-  <div class="kicker">Quickstart · อัปเดต 5 พ.ย. 2569 · ผ่านการรันจริง</div>
+  <div class="kicker">Quickstart · อัปเดต 5 พ.ย. 2569 · script v1.1.3 · ผ่านการรันจริง</div>
   <h1>เปลี่ยน LINE OA เป็นแอดมินตอบลูกค้า 24 ชม.</h1>
   <p class="sub">ด้วย <b>Hermes Agent</b> + สคริปต์ตัวเดียวจบ <code style="font-family:var(--mono);font-size:13px;color:#8FD9A8">line-connect.sh</code> — ไม่ต้องเข้าใจคำว่า webhook, profile, proxy ก่อนก็ทำได้ เพราะทุกอย่างถูกกลั่นจากคนที่ติดมาทั้งวันแล้ว 😄</p>
   <div class="chips">
@@ -118,7 +118,7 @@
   <ul class="tick">
     <li><b>บัญชี LINE OA</b> ของธุรกิจ (มีอยู่แล้ว ใช้ได้เลย ไม่ต้องสร้างใหม่)</li>
     <li><b>เครื่องรัน 24 ชม.</b> — เลือก 1 ทาง: 💻 Mac ที่ไม่ปิดฝา / ☁️ <b>Hostinger VPS (แนะนำ)</b> template "Hermes Agent" ~200 บ./เดือน เปิดทั้งวันทั้งคืน</li>
-    <li><b>AI key</b> หนึ่งตัว (OpenAI / Claude / Alibaba plan ฯลฯ) — Hermes ใช้เป็นสมอง ตอนรันสคริปต์จะมีจุดให้ใส่ key ให้อยู่แล้ว</li>
+    <li><b>AI key</b> หนึ่งตัว (OpenAI / Claude / Alibaba plan ฯลฯ) — เป็นสมองบอท ใส่ใน dashboard ของเครื่อง (ขั้น 3.0) — <b>เชื่อมต่ออย่างเดียวไม่พอ ต้องกดเลือก model ที่จะใช้ด้วย</b> (บทเรียนจริงจากคนเขียนคู่มือ 😅)</li>
   </ul>
   <div class="warn"><b>ทำไมแนะนำ VPS?</b> เพราะ "แอดมิน 24 ชม." ต้องไม่ตายตอนปิดเครื่อง — Mac เหมาะกับช่วงทดลอง (และเราแถม tunnel ชั่วคราวให้ในสคริปต์ mode mac อยู่แล้ว)</div>
 
@@ -140,6 +140,8 @@
     <p>ใต้ "Channel secret" → copy ไว้ — <b>เก็บสองอย่างดี ๆ ห้ามให้ใคร</b> เพราะคือกุญแจบอท</p></div>
 
   <h2><span class="n">3</span>รันสคริปต์บนเครื่องของคุณ</h2>
+  <div class="card"><div class="h">3.0 เสียบสมองก่อน (ห้ามข้าม!)</div>
+    <p>เปิด <b>dashboard ของ template</b> (URL ที่ได้ตอนติดตั้งใน hPanel) → login → ไปหน้า <b>AI / Models</b> → เชื่อมต่อ provider ของคุณ (ใส่ key หรือ OAuth) → <b>เลือก model ที่จะให้บอทใช้</b> เช่น qwen, gpt → บันทึก — สคริปต์ด้านล่างจัดการแค่ "สายโทรศัพท์" (LINE↔เครื่อง) ไม่ได้ใส่สมองให้ ถ้าข้ามขั้นนี้ ผลคือ: health สีเขียว 🟢 แต่บอท<b>เงียบไม่ตอบ</b> เพราะได้ยินแต่ไม่มีสมองคิด</p></div>
   <div class="tracks">
     <div class="trk rec"><div class="r">Recommended</div>
       <div class="t">☁️ Hostinger VPS<span class="badge">ทำงานทั้งคืน</span></div>
@@ -159,7 +161,7 @@ bash line-connect.sh <span class="hl">mac</span></pre></div>
   </div>
   <div class="card"><div class="h">❓ โหลดแล้วเก็บไว้ไหน?</div><p><b>ไว้ตรงไหนก็ได้ทั้งนั้น</b> — สคริปต์รันจากโฟลเดอร์ที่คุณยืนอยู่ ไม่ต้องย้ายเข้าระบบไหน วิธีคือเปิด Terminal (Mac) หรือ <b>Browser Terminal ใน hPanel</b> (VPS) แล้ววาง 2 บรรทัดข้างบน มันดาวน์โหลด+รัน ณ ตำแหน่งนั้นเลย</p></div>
   <div class="card"><div class="h">🛡️ กลัวว่าสคริปต์จะอันตรายไหม — อ่าน 4 ข้อนี้ก่อน</div>
-    <p><b>1) สคริปต์เปิดให้อ่านทุกคน</b> — ทั้ง 112 บรรทัดอยู่ใน GitHub ใครพอดูโค้ดเป็นช่วยตรวจได้ และตัวสคริปต์เองแค่แก้ไฟล์ 2 ใบในเครื่องคุณ + ข้อมูลที่ถูกส่งออกจากเครื่อง มีปลายทางเดียวคือ <code style="font-family:var(--mono);font-size:12px;color:#8FD9A8">api.line.me</code> (ที่ของ LINE โดยตรง ผ่าน HTTPS)</p>
+    <p><b>1) สคริปต์เปิดให้อ่านทุกคน</b> — ร้อยกว่าบรรทัดอยู่ใน GitHub ใครพอดูโค้ดเป็นช่วยตรวจได้ และตัวสคริปต์เองแค่แก้ไฟล์ 2 ใบในเครื่องคุณ + ข้อมูลที่ถูกส่งออกจากเครื่อง มีปลายทางเดียวคือ <code style="font-family:var(--mono);font-size:12px;color:#8FD9A8">api.line.me</code> (ที่ของ LINE โดยตรง ผ่าน HTTPS)</p>
     <p><b>2) ลอง dry-run ก่อน — ไม่แตะอะไรเลยแม้แต่ไฟล์เดียว</b> — ใส่ <code style="font-family:var(--mono);font-size:12px;color:#8FD9A8">DRY=1</code> นำหน้าคำสั่ง แล้วมันจะพิมพ์รายการที่จะทำออกมาให้ดูก่อนทั้งหมด เครื่องยังไม่มีอะไรเปลี่ยน</p>
     <p><b>3) รันบน VPS = ห้องเช่าทดลอง</b> — ถ้าเกิดพังจริงก็ format VPS ใหม่จาก Hostinger กี่รอบก็ได้ใน 10 นาที ไฟล์งานส่วนตัวในคอมเราไม่เกี่ยว — นี่คือเหตุผลที่คนทำธุรกิจควรรันบอทบน VPS ไม่ใช่เครื่องหลัก</p>
     <p><b>4) ยังไม่สะดวกใจ = ไม่ต้องรัน</b> — ทักมาหาบอทที่ OA นี้เลย ให้ตัวบอทพิสูจน์ตัวเองต่อหน้าคุณ หรือรอตอนที่เราคลิกรันสดทั้งจอก็ได้ และข้อควรจำ: <b>ใครที่ขายสคริปต์ติดตั้งบอทแล้วขอ token ของคุณไปใส่ให้ = มิจฉาชีพ</b> — ของจริงฟรีบน GitHub และ token ต้องอยู่ในเครื่องคุณคนเดียว</p></div>
@@ -189,7 +191,7 @@ bash line-connect.sh <span class="hl">mac</span></pre></div>
   <details><summary>บอทตอบว่า Rate limited (429)</summary>
     <div class="bd">AI key หมดโควตา — ไม่ใช่ระบบพัง: พิมพ์ <b>/model</b> เพื่อสลับตัวที่โควตายังเหลือ หรือเติม credit ของผู้ให้บริการนั้น</div></details>
   <details><summary>ทักแล้วเงียบสนิท (ไม่มีข้อความจาก HelloOA)</summary>
-    <div class="bd">ตรวจ 3 จุด: ① Use webhook ON? ② Verify 🟢? ③ ปิด "ตอบกลับอัตโนมัติ" ใน OA Manager หรือยัง? — ครบสามแล้วทักใหม่ ถ้าเงียบอยู่ เปิด log ของ gateway ดูบรรทัด <code style="color:#8FD9A8">line connected</code> ว่ามีไหม</div></details>
+    <div class="bd">ตรวจ 4 จุด: ① Use webhook ON? ② Verify 🟢? ③ ปิด "ตอบกลับอัตโนมัติ" ใน OA Manager หรือยัง? ④ <b>เสียบสมองหรือยัง (ขั้น 3.0)</b> — พิมพ์ <b>/new</b> ดูบรรทัด <code style="color:#8FD9A8">◆ Model:</code> ถ้าว่าง/เออเรอร์ = ยังไม่ได้เลือก model ให้บอท — ครบสี่แล้วทักใหม่ ถ้าเงียบอยู่ เปิด log ของ gateway ดูบรรทัด <code style="color:#8FD9A8">line connected</code> ว่ามีไหม</div></details>
   <details><summary>LINE ตอบซ้ำ 2 รอบ / เดี๋ยวตอบเดี๋ยวไม่ตอบ</summary>
     <div class="bd">บอท 2 ตัวแย่ง OA เดียวกัน (profile ซ้ำ token เดียวกัน) — สคริปต์กันไว้ให้แล้ว ถ้าไปเปิดเพิ่มเอง: OA หนึ่งตัวต้องอยู่กับ profile เดียวเท่านั้น</div></details>
 
