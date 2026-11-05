@@ -1,0 +1,213 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>เปิดแอดมิน 24 ชม. ให้ LINE OA — Hermes Agent ฉบับทำตามได้</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Kanit:wght@300;400;500;600&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root{
+    --bg:#0A0D10; --surface:#10161B; --surface2:#161E25; --ink:#E9EFF4;
+    --muted:#93A1B0; --faint:#5C6B7A; --border:#1F2A33;
+    --accent:#06C755; --accent-dim:rgba(6,199,85,.12); --accent-line:rgba(6,199,85,.35);
+    --warn:#F5A524; --danger:#FF6B6B; --code:#0D1216;
+    --mono:'JetBrains Mono',ui-monospace,SFMono-Regular,Menlo,monospace;
+  }
+  *{box-sizing:border-box;margin:0;padding:0}
+  html{scroll-behavior:smooth}
+  body{background:var(--bg);color:var(--ink);font-family:'Kanit',system-ui,sans-serif;font-weight:300;line-height:1.75;font-size:16px;-webkit-font-smoothing:antialiased}
+  .wrap{max-width:860px;margin:0 auto;padding:48px 24px 90px}
+  .kicker{font-family:var(--mono);font-size:11px;letter-spacing:.18em;color:var(--accent);text-transform:uppercase;font-weight:500}
+  h1{font-weight:600;font-size:clamp(27px,4.6vw,40px);line-height:1.25;margin:10px 0 14px}
+  .sub{color:var(--muted);font-size:15.5px;max-width:660px}
+  .chips{display:flex;flex-wrap:wrap;gap:8px;margin-top:20px}
+  .chip{font-family:var(--mono);font-size:11.5px;color:var(--muted);background:var(--surface);border:1px solid var(--border);padding:4px 10px;border-radius:6px}
+  .chip b{color:var(--ink);font-weight:500}
+  .chip.ok::before{content:'● ';color:var(--accent)}
+  .navlinks{display:flex;gap:10px;margin-top:20px;flex-wrap:wrap}
+  .navlinks a{font-size:13px;color:var(--accent);text-decoration:none;border:1px solid var(--accent-line);padding:6px 14px;border-radius:8px}
+  .navlinks a:hover{background:var(--accent-dim)}
+
+  .flow{display:flex;align-items:stretch;gap:0;margin:30px 0 6px;flex-wrap:wrap}
+  .fnode{background:var(--surface);border:1px solid var(--border);border-radius:8px;padding:10px 14px;flex:1 1 150px;min-width:150px}
+  .fnode .t{font-size:13px;font-weight:500;line-height:1.35}
+  .fnode .d{font-family:var(--mono);font-size:10.5px;color:var(--faint);margin-top:3px}
+  .fnode.hot{border-color:var(--accent-line)}
+  .farrow{display:flex;align-items:center;padding:0 8px;color:var(--accent);font-family:var(--mono);font-size:14px;flex:0 0 auto}
+
+  h2{font-size:21px;font-weight:500;margin:44px 0 6px;display:flex;align-items:center;gap:12px}
+  h2 .n{width:34px;height:34px;border-radius:50%;background:var(--accent-dim);border:1.5px solid var(--accent);color:var(--accent);font-family:var(--mono);font-size:15px;display:flex;align-items:center;justify-content:center;flex:0 0 auto}
+  .lead{color:var(--muted);font-size:14px;margin:4px 0 14px}
+  .lead b{color:var(--ink);font-weight:500}
+
+  .card{background:var(--surface);border:1px solid var(--border);border-radius:10px;padding:16px 18px;margin:10px 0}
+  .card .h{font-size:14.5px;font-weight:500;margin-bottom:6px}
+  .card p{font-size:13.5px;color:var(--muted)}
+  .card p b{color:var(--ink);font-weight:500}
+  .kv{font-family:var(--mono);font-size:12.5px;color:#8FD9A8;background:var(--code);border:1px solid var(--border);border-radius:6px;padding:2px 8px;display:inline-block;margin:4px 4px 0 0;word-break:break-all}
+  ul.tick{list-style:none;margin:8px 0}
+  ul.tick li{padding:4px 0 4px 26px;position:relative;font-size:14px;color:var(--muted)}
+  ul.tick li::before{content:'✓';position:absolute;left:2px;color:var(--accent);font-weight:600}
+  .cb{position:relative;margin:10px 0}
+  .cb pre{background:var(--code);border:1px solid var(--border);border-radius:8px;padding:12px 14px;font-family:var(--mono);font-size:12.5px;color:#D7E3EE;overflow-x:auto;line-height:1.6;white-space:pre-wrap}
+  .cb .copy{position:absolute;top:8px;right:8px;background:var(--surface2);border:1px solid var(--border);color:var(--muted);font-family:var(--mono);font-size:10.5px;padding:3px 9px;border-radius:5px;cursor:pointer}
+  .cb .copy:hover{color:var(--accent);border-color:var(--accent-line)}
+  .cb .copy.done{color:var(--accent);border-color:var(--accent)}
+  .hl{color:#8FD9A8}
+  .warn{border-left:3px solid var(--warn);background:rgba(245,165,36,.06);border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0;font-size:13.5px;color:var(--muted)}
+  .warn b{color:var(--warn);font-weight:500}
+  .danger{border-left:3px solid var(--danger);background:rgba(255,107,107,.05);border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0;font-size:13.5px;color:var(--muted)}
+  .danger b{color:var(--danger);font-weight:500}
+  .good{border-left:3px solid var(--accent);background:var(--accent-dim);border-radius:0 8px 8px 0;padding:12px 16px;margin:12px 0;font-size:13.5px;color:var(--muted)}
+  .good b{color:var(--accent);font-weight:500}
+
+  .tracks{display:grid;grid-template-columns:1fr 1fr;gap:14px;margin:16px 0}
+  .trk{background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:18px}
+  .trk.rec{border-color:var(--accent-line)}
+  .trk .r{font-family:var(--mono);font-size:10.5px;letter-spacing:.14em;text-transform:uppercase;color:var(--faint)}
+  .trk.rec .r{color:var(--accent)}
+  .trk .t{font-size:16px;font-weight:500;margin:4px 0 8px}
+  .trk p{font-size:13px;color:var(--muted)}
+  .badge{display:inline-block;font-family:var(--mono);font-size:10px;background:var(--accent);color:#04220F;font-weight:500;padding:2px 8px;border-radius:4px;margin-left:6px}
+  @media(max-width:660px){.tracks{grid-template-columns:1fr}}
+
+  details{background:var(--surface);border:1px solid var(--border);border-radius:10px;margin:8px 0;padding:2px 0}
+  details summary{cursor:pointer;font-size:14px;font-weight:500;padding:12px 16px;list-style:none;display:flex;justify-content:space-between;align-items:center}
+  details summary::after{content:'+';font-family:var(--mono);color:var(--faint);font-size:16px}
+  details[open] summary::after{content:'−'}
+  details .bd{padding:0 16px 14px;font-size:13.5px;color:var(--muted)}
+  details .bd b{color:var(--ink);font-weight:500}
+
+  .dl{display:flex;gap:14px;align-items:center;background:var(--surface);border:1px solid var(--accent-line);border-radius:12px;padding:16px 20px;margin:14px 0}
+  .dl a.btn{background:var(--accent);color:#04220F;text-decoration:none;font-weight:500;font-size:14px;padding:9px 20px;border-radius:8px;flex:0 0 auto}
+  .dl p{font-size:13px;color:var(--muted)}
+  footer{text-align:center;color:var(--faint);font-size:12px;margin-top:70px;font-family:var(--mono)}
+</style>
+</head>
+<body>
+<div class="wrap">
+
+  <div class="kicker">Quickstart · อัปเดต 5 พ.ย. 2569 · ผ่านการรันจริง</div>
+  <h1>เปลี่ยน LINE OA เป็นแอดมินตอบลูกค้า 24 ชม.</h1>
+  <p class="sub">ด้วย <b>Hermes Agent</b> + สคริปต์ตัวเดียวจบ <code style="font-family:var(--mono);font-size:13px;color:#8FD9A8">line-connect.sh</code> — ไม่ต้องเข้าใจคำว่า webhook, profile, proxy ก่อนก็ทำได้ เพราะทุกอย่างถูกกลั่นจากคนที่ติดมาทั้งวันแล้ว 😄</p>
+  <div class="chips">
+    <span class="chip ok">ใช้เวลาจริง <b>~30-60 นาที</b></span>
+    <span class="chip ok">ต้องมี <b>LINE OA</b> ที่มีอยู่แล้ว</span>
+    <span class="chip">ทางที่แนะนำ <b>Hostinger VPS</b></span>
+  </div>
+  <div class="navlinks">
+    <a href="quickstart.html">🚀 เริ่มเลย (หน้านี้)</a>
+    <a href="https://github.com/paulkimmy/hermes-line-admin">📦 GitHub — สคริปต์ &amp; คู่มือ</a>
+    <a href="https://github.com/paulkimmy/hermes-line-admin/blob/main/line-connect.sh">⬇ source สคริปต์</a>
+    <a href="https://github.com/paulkimmy/hermes-line-admin/blob/main/README.md">🖥️ README (VPS)</a>
+  </div>
+
+  <div class="flow">
+    <div class="fnode"><div class="t">ลูกค้าทัก LINE OA</div><div class="d">ที่คุณมีอยู่แล้ว</div></div>
+    <div class="farrow">→</div>
+    <div class="fnode"><div class="t">LINE Servers</div><div class="d">ส่งข้อความเข้า URL</div></div>
+    <div class="farrow">→</div>
+    <div class="fnode hot"><div class="t">Hermes Agent + สคริปต์</div><div class="d">Mac หรือ VPS ก็ได้เลย</div></div>
+    <div class="farrow">→</div>
+    <div class="fnode"><div class="t">AI ตอบกลับ</div><div class="d">ตามข้อมูลที่เราสอน</div></div>
+  </div>
+
+  <h2><span class="n">0</span>เตรียมของ 3 อย่าง</h2>
+  <ul class="tick">
+    <li><b>บัญชี LINE OA</b> ของธุรกิจ (มีอยู่แล้ว ใช้ได้เลย ไม่ต้องสร้างใหม่)</li>
+    <li><b>เครื่องรัน 24 ชม.</b> — เลือก 1 ทาง: 💻 Mac ที่ไม่ปิดฝา / ☁️ <b>Hostinger VPS (แนะนำ)</b> template "Hermes Agent" ~200 บ./เดือน เปิดทั้งวันทั้งคืน</li>
+    <li><b>AI key</b> หนึ่งตัว (OpenAI / Claude / Alibaba plan ฯลฯ) — Hermes ใช้เป็นสมอง ตอนรันสคริปต์จะมีจุดให้ใส่ key ให้อยู่แล้ว</li>
+  </ul>
+  <div class="warn"><b>ทำไมแนะนำ VPS?</b> เพราะ "แอดมิน 24 ชม." ต้องไม่ตายตอนปิดเครื่อง — Mac เหมาะกับช่วงทดลอง (และเราแถม tunnel ชั่วคราวให้ในสคริปต์ mode mac อยู่แล้ว)</div>
+
+  <h2><span class="n">1</span>สร้าง "ประตูบอท" ใน LINE Console</h2>
+  <p class="lead">เข้า <b>developers.line.biz/console</b> → Login ด้วยบัญชี LINE ปกติ</p>
+  <div class="card"><div class="h">1.1 สร้าง Provider (ถ้ายังไม่มี)</div>
+    <p>Messaging API tab → <b>Create a Provider</b> → ตั้งชื่ออะไรก็ได้ เช่น "My Business"</p></div>
+  <div class="card"><div class="h">1.2 สร้าง Channel แบบ Messaging API</div>
+    <p><b>Create a Messaging API channel</b> → กรอกชื่อธุรกิจ/รายละเอียด/หมวดหมู่ → Create.<br>
+    ถ้ามันถามเชื่อมกับ LINE OA ที่มีอยู่แล้ว: ใช้หน้า <b>LINE Official Account Manager</b> → Add LINE Official Account from LINE Official Account Manager (เลือก OA ของคุณ)</p></div>
+  <div class="card"><div class="h">1.3 ปิด Auto-reply + เลิกคุยเองก่อน</div>
+    <p>ใน Channel → tab <b>Messaging API</b> → <b>Auto-reply messages = OFF</b>, <b>Greeting messages = OFF</b><br>
+    ใน OA Manager → <b>ตอบกลับอัตโนมัติ = ปิด</b> ไม่งั้นบอทกับคุณตีกันเอง</p></div>
+
+  <h2><span class="n">2</span>หยิบ Key 2 ตัว (เดี๋ยวต้องใช้ใส่สคริปต์)</h2>
+  <div class="card"><div class="h">2.1 Channel access token</div>
+    <p>tab Messaging API → ปุ่ม <b>Issue</b> (ใต้ "Channel access token (long-lived)") → กด Issue แล้ว <b>copy ทั้งเส้นยาวๆ</b> (ปกติยาว ~170 ตัว จบด้วย <code style="color:#8FD9A8">=</code> — มันยาวของมันเองแบบนี้ ไม่ได้วางซ้ำ)</p></div>
+  <div class="card"><div class="h">2.2 Channel secret</div>
+    <p>ใต้ "Channel secret" → copy ไว้ — <b>เก็บสองอย่างดี ๆ ห้ามให้ใคร</b> เพราะคือกุญแจบอท</p></div>
+
+  <h2><span class="n">3</span>รันสคริปต์บนเครื่องของคุณ</h2>
+  <div class="tracks">
+    <div class="trk rec"><div class="r">Recommended</div>
+      <div class="t">☁️ Hostinger VPS<span class="badge">ทำงานทั้งคืน</span></div>
+      <p>ซื้อ VPS template <b>Hermes Agent</b> → เปิด <b>DNS</b> โดเมนคุณชี้มา VPS (A record) → <b>Browser Terminal</b> ใน hPanel แล้วรัน:</p>
+      <div class="cb"><button class="copy">copy</button><pre><span class="hl">curl</span> -sL https://raw.githubusercontent.com/paulkimmy/hermes-line-admin/main/line-connect.sh -o line-connect.sh
+bash line-connect.sh <span class="hl">vps</span> cloud.โดเมนคุณ.com</pre></div>
+      <p style="margin-top:8px">แล้ว <b>วาง token + secret ตามที่ถาม</b> จบ — สคริปต์สร้าง profile แยก ตรวจ token จัด Traefik HTTPS cert ให้เอง</p>
+    </div>
+    <div class="trk"><div class="r">ทดลองก่อน</div>
+      <div class="t">💻 Mac เครื่องคุณ</div>
+      <p>ติดตั้ง Hermes แล้วเปิด Terminal รัน:</p>
+      <div class="cb"><button class="copy">copy</button><pre>brew install cloudflared
+<span class="hl">curl</span> -sL https://raw.githubusercontent.com/paulkimmy/hermes-line-admin/main/line-connect.sh -o line-connect.sh
+bash line-connect.sh <span class="hl">mac</span></pre></div>
+      <p style="margin-top:8px">สคริปต์จะเปิด tunnel ให้เอง + พิมพ์ <b>URL สาธารณะ</b> มาให้ (URL ชั่วคราว = ลองได้จริง แต่อย่าใช้กับลูกค้าถาวร และอย่าปิด Terminal)</p>
+    </div>
+  </div>
+  <div class="card"><div class="h">❓ โหลดแล้วเก็บไว้ไหน?</div><p><b>ไว้ตรงไหนก็ได้ทั้งนั้น</b> — สคริปต์รันจากโฟลเดอร์ที่คุณยืนอยู่ ไม่ต้องย้ายเข้าระบบไหน วิธีคือเปิด Terminal (Mac) หรือ <b>Browser Terminal ใน hPanel</b> (VPS) แล้ววาง 2 บรรทัดข้างบน มันดาวน์โหลด+รัน ณ ตำแหน่งนั้นเลย</p></div>
+  <div class="good"><b>ระหว่างทางสคริปต์เตือนอะไร = ทำตามที่มันบอก</b> — ทุก pitfall ที่ทีมเราเคยเจอถูกฝังเป็น check ไว้แล้ว: token ผิด, profile ชนกัน, gateway บูตช้า ฯลฯ</div>
+
+  <h2><span class="n">4</span>เอา URL ที่สคริปต์พิมพ์ให้ ไปวางใน Console</h2>
+  <div class="card">
+    <p>สคริปต์จะขึ้นบรรทัดสุดท้ายประมาณ:<br>
+    <span class="kv">https://cloud.โดเมนคุณ.com/p/adminbot/line/webhook</span><br>
+    Copy → กลับไป LINE Console → Messaging API → ช่อง <b>Webhook URL</b> → วาง → <b>Save</b><br>
+    → กด <b>Verify</b> (ต้องขึ้น 🟢) → เปิด <b>Use webhook = ON</b></p>
+  </div>
+  <div class="warn"><b>Verify ไม่ผ่าน?</b> อย่าเพิ่งเดา — คัด URL ที่ "สคริปต์พิมพ์ให้ล่าสุด" เท่านั้น (สคริปต์คำนวณ path ถูกตามแบบเครื่องคุณทุกกรณี: ทั้งสองทางลงท้าย <code style="color:#8FD9A8">/p/adminbot/line/webhook</code> เหมือนกัน ต่างแค่โดเมน)</div>
+
+  <h2><span class="n">5</span>ทักหาบอทจากมือถือคุณ 🎉</h2>
+  <ul class="tick">
+    <li>เปิด LINE → ทัก OA ธุรกิจคุณ → พิมพ์ <b>/new</b> (เห็น Model ที่ AI ตั้งไว้ = สมองพร้อมแล้ว)</li>
+    <li>พิมพ์ <b>hello</b> — ถ้าบอทตอบกลับภายในไม่กี่วิ: <b>คุณมีแอดมิน 24 ชม.แล้ว</b></li>
+    <li>ขั้นถัดไป (สำคัญ): <b>สอนสมองบอท</b> — ใส่ข้อมูลจริงของธุรกิจ เช่น "ค่าห้อง/สินค้า/เวลาเปิด/คำถามที่พบบ่อย" ให้ตอบรู้เรื่อง ไม่ใช่แค่ตอบเก่ง (อ่านต่อในไกด์หลัก เฟส 5)</li>
+  </ul>
+
+  <h2><span class="n">6</span> Troubleshooting ที่เจอจริง 90% จบที่นี่</h2>
+  <details><summary>Webhook ได้ 502 Bad Gateway / Verify ไม่ผ่าน</summary>
+    <div class="bd">แปลว่า "URL ถึงแล้ว แต่ข้างหลังยังไม่มีใครฟัง" → รัน <b>line-connect.sh ซ้ำ</b> หรือรอ gateway บูตให้จบ (~30 วิ) แล้ว Verify ใหม่</div></details>
+  <details><summary>เปิดหน้า webhook แล้วขึ้น "Unknown or unconfigured profile"</summary>
+    <div class="bd">ใจร้อนไป — gateway หลัง restart ใช้เวลา <b>~30 วิ</b> กว่าจะรับงาน — รอครบแล้วลองใหม่ ผ่านแน่นอน</div></details>
+  <details><summary>บอทตอบว่า Rate limited (429)</summary>
+    <div class="bd">AI key หมดโควตา — ไม่ใช่ระบบพัง: พิมพ์ <b>/model</b> เพื่อสลับตัวที่โควตายังเหลือ หรือเติม credit ของผู้ให้บริการนั้น</div></details>
+  <details><summary>ทักแล้วเงียบสนิท (ไม่มีข้อความจาก HelloOA)</summary>
+    <div class="bd">ตรวจ 3 จุด: ① Use webhook ON? ② Verify 🟢? ③ ปิด "ตอบกลับอัตโนมัติ" ใน OA Manager หรือยัง? — ครบสามแล้วทักใหม่ ถ้าเงียบอยู่ เปิด log ของ gateway ดูบรรทัด <code style="color:#8FD9A8">line connected</code> ว่ามีไหม</div></details>
+  <details><summary>LINE ตอบซ้ำ 2 รอบ / เดี๋ยวตอบเดี๋ยวไม่ตอบ</summary>
+    <div class="bd">บอท 2 ตัวแย่ง OA เดียวกัน (profile ซ้ำ token เดียวกัน) — สคริปต์กันไว้ให้แล้ว ถ้าไปเปิดเพิ่มเอง: OA หนึ่งตัวต้องอยู่กับ profile เดียวเท่านั้น</div></details>
+
+  <div class="danger"><b>ปลอดภัยไว้ก่อน</b> — บอทที่ต่อ LINE สาธารณะ = ใครก็พิมพ์สั่งมันได้ สคริปต์ปลดอาวุธบอทให้ตั้งแต่แรก (ห้ามเข้าถึงไฟล์/สั่งเครื่อง) <b>อย่าเปิดให้เอง</b> และข้อมูลลูกค้า = PDPA เก็บ KB ในเครื่องตัวเองพอ</div>
+
+  <h2><span class="n">7</span>โหลดสคริปต์</h2>
+  <div class="dl">
+    <a class="btn" href="https://raw.githubusercontent.com/paulkimmy/hermes-line-admin/main/line-connect.sh" download>⬇ line-connect.sh</a>
+    <p>สคริปต์เดียวใช้ได้ 2 โหมด (<code style="color:#8FD9A8">vps</code> / <code style="color:#8FD9A8">mac</code>) · มี <code style="color:#8FD9A8">DRY=1</code> ให้ดูก่อนรันจริง · ตรวจ token กับ LINE API ก่อนเสมอ</p>
+  </div>
+
+  <footer>Hermes Agent × LINE OA — จากคลิป "แอดมิน 24 ชม." · ทำจริง เจอจริง ทุกขั้นรันมาแล้ว</footer>
+</div>
+<script>
+document.querySelectorAll('.cb .copy').forEach(function(b){
+  b.addEventListener('click',function(){
+    var t=b.parentElement.querySelector('pre').innerText.replace(/\s+/g,' ').trim();
+    navigator.clipboard.writeText(b.parentElement.querySelector('pre').innerText).then(function(){
+      b.textContent='copied ✓';b.classList.add('done');
+      setTimeout(function(){b.textContent='copy';b.classList.remove('done')},1600);
+    });
+  });
+});
+</script>
+</body>
+</html>
