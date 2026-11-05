@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =====================================================================
-# line-connect.sh — Hermes × LINE OA in ONE command (v1.1.2)
+# line-connect.sh — Hermes × LINE OA in ONE command (v1.1.3)
 # กลั่นจากของจริงทั้งวัน: token, profile lane, shared listener, Traefik
 #
 #  usage:
@@ -118,13 +118,14 @@ if [ "$MODE" = "vps" ]; then
   CH /opt/data/profiles/$PROFILE memory.memory_enabled false
   CH /opt/data                     platforms.webhook.enabled true
   CH /opt/data                     platforms.line.enabled false
-  say "ต่อ Traefik router '/p/$PROFILE/line' → :8644"
+  say "ต่อ Traefik router '/p/$PROFILE/line' → :8644 (+ ผูก service ชัดเจน俩 router)"
   CF="$PROJ/docker-compose.yml"
   if [ "${DRY:-0}" = "1" ]; then printf "${DIM}  [dry] patch labels ใน %s${NC}\n" "$CF"; else
     cp "$CF" "$CF.bak.$(date +%s)"
     grep -q 'traefik.http.routers.line' "$CF" || {
-      sed -i "/env_file:/i \\      - traefik.enable=true\n      - traefik.http.routers.line.rule=Host(\`${DOMAIN}\`) \&\& PathPrefix(\`/p/${PROFILE}/line\`)\n      - traefik.http.routers.line.entrypoints=websecure\n      - traefik.http.routers.line.tls.certresolver=letsencrypt\n      - traefik.http.services.line.loadbalancer.server.port=8644" "$CF"; }
+      sed -i "/env_file:/i \\      - traefik.enable=true\n      - traefik.http.routers.line.rule=Host(\`${DOMAIN}\`) \&\& PathPrefix(\`/p/${PROFILE}/line\`)\n      - traefik.http.routers.line.entrypoints=websecure\n      - traefik.http.routers.line.tls.certresolver=letsencrypt\n      - traefik.http.services.line.loadbalancer.server.port=8644\n      - traefik.http.routers.line.service=line\n      - traefik.http.routers.${PROJ##*/}.service=${PROJ##*/}" "$CF"; }
     sed -i "s|PathPrefix(\`/line\`)|PathPrefix(\`/p/${PROFILE}/line\`)|; s|PathPrefix(\`/p/[^\`]*\`)|PathPrefix(\`/p/${PROFILE}/line\`)|; s|traefik.http.services.line.loadbalancer.server.port=.*|traefik.http.services.line.loadbalancer.server.port=8644|" "$CF"
+    grep -q 'routers.line.service' "$CF" || sed -i "s|traefik.http.services.line.loadbalancer.server.port=8644|&\n      - traefik.http.routers.line.service=line\n      - traefik.http.routers.${PROJ##*/}.service=${PROJ##*/}|" "$CF"
     fi
   run bash -c "cd $PROJ && docker compose up -d && docker restart $C"
   wait_health "https://$DOMAIN/p/$PROFILE/line/webhook/health"
