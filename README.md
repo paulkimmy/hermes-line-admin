@@ -1,6 +1,6 @@
 # Hermes × LINE OA — สคริปต์แอดมิน 24 ชม.
 
-ตัวต่อ LINE OA เข้ากับ Hermes Agent บน **Hostinger VPS template "Hermes Agent"** — จากคลิป "แอดมิน 24 ชม." (paulkimmy)
+ตัวต่อ LINE OA เข้ากับ Hermes Agent — รันจริงบน **Hostinger VPS template "Hermes Agent"** (และทดลองบนเครื่องตัวเองได้ด้วยโหมด mac) — จากคลิป "แอดมิน 24 ชม." (paulkimmy)
 
 ## เริ่มใช้งาน
 
@@ -24,6 +24,19 @@ bash line-connect.sh vps cloud.yourdomain.com
 - ถ้าเครื่องมีหลาย project จะให้เลือกระบบ (หรือระบุเอง: `PROJECT=/docker/hermes-agent-xxxx bash line-connect.sh vps ...`)
 - รันซ้ำได้เสมอ = ทับของเก่าอย่างปลอดภัย (เปลี่ยน token/โดเมนใหม่ แค่รันซ้ำ)
 - ดูก่อนโดยไม่แตะเครื่อง: `DRY=1 bash line-connect.sh vps your-domain.com`
+
+## ยังไม่มี VPS? ลองบนเครื่องตัวเองก่อน (Mac/Linux)
+
+สคริปต์เดียวกันมีโหมด `mac` — รันบนเครื่องที่ลง Hermes ไว้ได้เลย ไม่ต้องเช่าอะไร:
+
+```bash
+curl -sL https://raw.githubusercontent.com/paulkimmy/hermes-line-admin/main/line-connect.sh -o line-connect.sh
+bash line-connect.sh mac
+```
+
+สร้างทุกอย่างเหมือนโหมด VPS เป๊ะ (profile `adminbot` แยก, ปลดอาวุธบอทกัน prompt injection, webhook lane บน :8644) แค่การรับจาก LINE ใช้ [cloudflared](https://developers.cloudflare.com/cloudflare-one/connections/connect-networks/downloads/) quick tunnel (`brew install cloudflared`) — สคริปต์เปิดให้เองถ้ามี และพิมพ์ URL ที่ต้องเอาไปวางใน LINE Console ให้อัตโนมัติ
+
+⚠️ URL ของ quick tunnel **เปลี่ยนทุกรอบ restart** — โหมดนี้เหมาะทดลอง/สาธิต ถ้าจะให้บอทอยู่ 24 ชม. จริง ทางที่สะอาดกว่าคือ VPS template ตามด้านบน
 
 ## อาการที่เจอจริง
 
