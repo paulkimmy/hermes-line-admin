@@ -1,6 +1,6 @@
 #!/usr/bin/env bash
 # =====================================================================
-# line-connect.sh — Hermes × LINE OA in ONE command (v1.1.3)
+# line-connect.sh — Hermes × LINE OA in ONE command (v1.1.4)
 # กลั่นจากของจริงทั้งวัน: token, profile lane, shared listener, Traefik
 #
 #  usage:
@@ -8,7 +8,7 @@
 #    bash line-connect.sh vps your-domain.com   # รันบน Hostinger VPS
 #  multi-project VPS: PROJECT=/docker/hermes-agent-xxxx bash line-connect.sh vps ...
 #  non-interactive:
-#    LINE_TOKEN="xxx" LINE_SECRET="yyy" bash line-connect.sh vps
+#    LINE_TOKEN=${LINE_TOKEN-xxx} LINE_SECRET=${LINE_SECRET-yyy} LINE_ADMIN=${LINE_ADMIN-Uxxxx} bash line-connect.sh vps
 #  dry-run (ดูว่าจะทำอะไรบ้าง ไม่แตะจริง):
 #    DRY=1 bash line-connect.sh vps your-domain.com
 # =====================================================================
@@ -34,8 +34,8 @@ ask LINE_SECRET "LINE Channel secret: "
 # ---------- verify token ก่อนเสมอ (บทเรียน: อย่าเดาจาก length) ----------
 say "ตรวจ token กับ LINE API ..."
 AUTHH=$(printf 'Bearer %s' "$LINE_TOKEN")
-BOTNAME=$(curl -sf -m 15 https://api.line.me/v2/bot/info -H "Authorization: ${AUTHH}" | sed -n 's/.*"displayName":"\([^"]*\)".*/\1/p') || die "LINE ปฏิเสธ token นี้ — ลอง copy ใหม่ทั้งก้อน (ห้ามตัดต่อ)"
-say "OK — พบ OA «$BOTNAME» 🎉"
+BOTNAME=$(curl -sf -m 15 https://api.line.me/v2/bot/info -H "Authorization: ***" | sed -n 's/.*"displayName":"\([^"]*\)".*/\1/p') || die "LINE ปฏิเสธ token นี้ — ลอง copy ใหม่ทั้งก้อน (ห้ามตัดต่อ)"
+say "OK — พบ OA «${BOTNAME}» 🎉"
 
 env_block(){ # $1 = path to .env
   if [ "${DRY:-0}" = "1" ]; then printf "${DIM}  [dry] write LINE_ keys → $1${NC}"; else
@@ -58,9 +58,9 @@ wait_health(){ # $1 url
 if [ "$MODE" = "mac" ]; then
   H=~/.hermes
   say "โหมด MAC — bot = profile '$PROFILE' (แปะหลัง default listener :8644)"
-  hermes profile create "$PROFILE" --description "LINE customer bot" 2>/dev/null || warn "(profile มีอยู่แล้ว)"
-  mkdir -p "$H/profiles/$PROFILE"; env_block "$H/profiles/$PROFILE/.env"
-  CH() { HERMES_HOME="$1" hermes config set "$2" "$3" >/dev/null; }
+  run hermes profile create "$PROFILE" --description "LINE customer bot" 2>/dev/null || warn "(profile มีอยู่แล้ว)"
+  run mkdir -p "$H/profiles/$PROFILE"; env_block "$H/profiles/$PROFILE/.env"
+  CH() { if [ "${DRY:-0}" = "1" ]; then printf "${DIM}  [dry] config set %s=... (profile %s)${NC}\n" "$2" "$1"; else HERMES_HOME="$1" hermes config set "$2" "$3" >/dev/null; fi; }
   CH "$H/profiles/$PROFILE" platforms.line.enabled true
   CH "$H"                     platforms.webhook.enabled true
   CH "$H"                     platforms.line.enabled false
@@ -71,8 +71,17 @@ if [ "$MODE" = "mac" ]; then
   wait_health "http://127.0.0.1:8644/p/$PROFILE/line/webhook/health"
 
   say "ให้ลูกค้าทักจากทุกบัญชีได้เลยไหม? (แนะนำ y สำหรับบอทหน้าร้าน) [y/n]"
-  read -r ANY; if [ "$ANY" = "y" ]; then
-    echo "LINE_ALLOW_ALL_USERS=true" >> "$H/profiles/$PROFILE/.env"
+  read -r ANY
+  if [ "$ANY" = "y" ]; then
+    if [ "${DRY:-0}" = "1" ]; then printf "${DIM}  [dry] append allow-all → %s${NC}\n" "$H/profiles/$PROFILE/.env"; else echo "LINE_ALLOW_ALL_USERS=true" >> "$H/profiles/$PROFILE/.env"; fi
+  fi
+  ADMIN="${LINE_ADMIN:-}"
+  if [ -z "$ADMIN" ]; then
+    say "ล็อกคำสั่ง /new /model ให้เฉพาะแอดมิน — พิมพ์ LINE user ID ของคุณ (ทัก OA แล้วพิมพ์ /whoami มันจะบอก ID) หรือ Enter เพื่อข้าม"
+    read -r ADMIN
+  fi
+  if [ -n "$ADMIN" ]; then CH "$H/profiles/$PROFILE" platforms.line.allow_admin_from "$ADMIN"; fi
+  if [ "$ANY" = "y" ] || [ -n "$ADMIN" ]; then
     say "บันทึกแล้ว — กำลัง restart gateway"
     run hermes gateway restart
     wait_health "http://127.0.0.1:8644/p/$PROFILE/line/webhook/health"
@@ -81,12 +90,16 @@ if [ "$MODE" = "mac" ]; then
   if command -v cloudflared >/dev/null 2>&1; then
     say "เปิด cloudflared ให้เลย? (y/n)"; read -r YN
     if [ "$YN" = "y" ]; then
-      nohup cloudflared tunnel --url http://localhost:8644 > ~/cloudflared.log 2>&1 &
-      sleep 8; URL=$(grep -o 'https://[a-z0-9-]*\.trycloudflare\.com' ~/cloudflared.log | head -1)
-      [ -n "$URL" ] || die "อ่าน URL จาก ~/cloudflared.log ไม่เจอ — เปิด log ดูเอง"
-      say "public URL: $URL"
-      wait_health "$URL/p/$PROFILE/line/webhook/health"
-      echo; printf "  ${GREEN}เอา URL นี้ไปใส่ LINE Console:${NC}\n  %s/p/%s/line/webhook\n\n" "$URL" "$PROFILE"
+      if [ "${DRY:-0}" = "1" ]; then
+        printf "${DIM}  [dry] เปิด cloudflared quick tunnel → พิมพ์ Console URL (เห็นของจริงตอนรันไม่แห้ง)${NC}\n"
+      else
+        nohup cloudflared tunnel --url http://localhost:8644 > ~/cloudflared.log 2>&1 &
+        sleep 8; URL=$(grep -o 'https://[a-z0-9-]*\.trycloudflare\.com' ~/cloudflared.log | head -1)
+        [ -n "$URL" ] || die "อ่าน URL จาก ~/cloudflared.log ไม่เจอ — เปิด log ดูเอง"
+        say "public URL: $URL"
+        wait_health "$URL/p/$PROFILE/line/webhook/health"
+        echo; printf "  ${GREEN}เอา URL นี้ไปใส่ LINE Console:${NC}\n  %s/p/%s/line/webhook\n\n" "$URL" "$PROFILE"
+      fi
     fi
   else
     warn "ยังไม่มี cloudflared → brew install cloudflared แล้วรัน: cloudflared tunnel --url http://localhost:8644"
@@ -111,14 +124,14 @@ if [ "$MODE" = "vps" ]; then
   [ -n "$C" ] || die "ไม่พบ container ที่รันอยู่ของ $PROJ (docker ps)"
   say "โหมด VPS — project=$PROJ container=$C domain=$DOMAIN"
   run docker exec -u hermes -e HERMES_HOME=/opt/data "$C" hermes profile create "$PROFILE" --description "LINE customer bot"
-  mkdir -p "$PROJ/data/profiles/$PROFILE"; env_block "$PROJ/data/profiles/$PROFILE/.env"
+  run mkdir -p "$PROJ/data/profiles/$PROFILE"; env_block "$PROJ/data/profiles/$PROFILE/.env"
   CH() { run docker exec -u hermes -e "HERMES_HOME=$1" "$C" hermes config set "$2" "$3" >/dev/null; }
   CH /opt/data/profiles/$PROFILE platforms.line.enabled true
   CH /opt/data/profiles/$PROFILE agent.disabled_toolsets '["terminal","code_execution","browser","computer_use","delegation","cronjob","kanban"]'
   CH /opt/data/profiles/$PROFILE memory.memory_enabled false
   CH /opt/data                     platforms.webhook.enabled true
   CH /opt/data                     platforms.line.enabled false
-  say "ต่อ Traefik router '/p/$PROFILE/line' → :8644 (+ ผูก service ชัดเจน俩 router)"
+  say "ต่อ Traefik router '/p/$PROFILE/line' → :8644 (+ ผูก service ชัดเจนทั้ง 2 router)"
   CF="$PROJ/docker-compose.yml"
   if [ "${DRY:-0}" = "1" ]; then printf "${DIM}  [dry] patch labels ใน %s${NC}\n" "$CF"; else
     cp "$CF" "$CF.bak.$(date +%s)"
@@ -131,8 +144,17 @@ if [ "$MODE" = "vps" ]; then
   wait_health "https://$DOMAIN/p/$PROFILE/line/webhook/health"
 
   say "ให้ลูกค้าทักจากทุกบัญชีได้เลยไหม? (แนะนำ y สำหรับบอทหน้าร้าน) [y/n]"
-  read -r ANY; if [ "$ANY" = "y" ]; then
-    echo "LINE_ALLOW_ALL_USERS=true" >> "$PROJ/data/profiles/$PROFILE/.env"
+  read -r ANY
+  if [ "$ANY" = "y" ]; then
+    if [ "${DRY:-0}" = "1" ]; then printf "${DIM}  [dry] append allow-all → %s${NC}\n" "$PROJ/data/profiles/$PROFILE/.env"; else echo "LINE_ALLOW_ALL_USERS=true" >> "$PROJ/data/profiles/$PROFILE/.env"; fi
+  fi
+  ADMIN="${LINE_ADMIN:-}"
+  if [ -z "$ADMIN" ]; then
+    say "ล็อกคำสั่ง /new /model ให้เฉพาะแอดมิน — พิมพ์ LINE user ID ของคุณ (ทัก OA แล้วพิมพ์ /whoami มันจะบอก ID) หรือ Enter เพื่อข้าม"
+    read -r ADMIN
+  fi
+  if [ -n "$ADMIN" ]; then CH /opt/data/profiles/$PROFILE platforms.line.allow_admin_from "$ADMIN"; fi
+  if [ "$ANY" = "y" ] || [ -n "$ADMIN" ]; then
     say "บันทึกแล้ว — กำลัง restart gateway"
     run docker restart "$C"
     wait_health "https://$DOMAIN/p/$PROFILE/line/webhook/health"

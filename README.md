@@ -24,6 +24,7 @@ bash line-connect.sh vps cloud.yourdomain.com
 - ถ้าเครื่องมีหลาย project จะให้เลือกระบบ (หรือระบุเอง: `PROJECT=/docker/hermes-agent-xxxx bash line-connect.sh vps ...`)
 - รันซ้ำได้เสมอ = ทับของเก่าอย่างปลอดภัย (เปลี่ยน token/โดเมนใหม่ แค่รันซ้ำ)
 - ดูก่อนโดยไม่แตะเครื่อง: `DRY=1 bash line-connect.sh vps your-domain.com`
+- ล็อกคำสั่ง `/new` `/model` ฯลฯ ให้เฉพาะแอดมิน — ตอนรันจะถาม LINE user ID (พิมพ์ `/whoami` ทัก OA ตัวเอง มันตอบ ID ให้) — ข้ามได้ด้วยการกด Enter
 
 ## ยังไม่มี VPS? ลองบนเครื่องตัวเองก่อน (Mac/Linux)
 
