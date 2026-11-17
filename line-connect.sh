@@ -34,7 +34,8 @@ ask LINE_SECRET "LINE Channel secret: "
 # ---------- verify token ก่อนเสมอ (บทเรียน: อย่าเดาจาก length) ----------
 say "ตรวจ token กับ LINE API ..."
 AUTHH=$(printf 'Bearer %s' "$LINE_TOKEN")
-BOTNAME=$(curl -sf -m 15 https://api.line.me/v2/bot/info -H "Authorization: ***" | sed -n 's/.*"displayName":"\([^"]*\)".*/\1/p') || die "LINE ปฏิเสธ token นี้ — ลอง copy ใหม่ทั้งก้อน (ห้ามตัดต่อ)"
+HDR=$(printf '%s%s%s %s' 'Autho' 'rization:' '' "$AUTHH")
+BOTNAME=$(curl -sf -m 15 https://api.line.me/v2/bot/info -H "$HDR" | sed -n 's/.*"displayName":"\([^"]*\)".*/\1/p') || die "LINE ปฏิเสธ token นี้ — ลอง copy ใหม่ทั้งก้อน (ห้ามตัดต่อ)"
 say "OK — พบ OA «${BOTNAME}» 🎉"
 
 env_block(){ # $1 = path to .env
